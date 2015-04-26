@@ -3,6 +3,8 @@
 #include <QFile>
 #include <QObject>
 #include <QTimer>
+#include "def.h"
+#include "frequencyspectrum.h"
 
 AudioEngine::AudioEngine(QObject *parent)
 	: QObject(parent)
@@ -14,35 +16,43 @@ AudioEngine::AudioEngine(QObject *parent)
 	, mBufferDataLength(0)
 	, mCount(0)
 {
-	mFormat.setSampleRate(44100);
+	qRegisterMetaType<FrequencySpectrum>("FrequencySpectrum");
+
+	mFormat.setSampleRate(SAMPLERATE);
 	mFormat.setSampleSize(16);
 	mFormat.setChannelCount(2);
 	mFormat.setByteOrder(QAudioFormat::LittleEndian);
 	mFormat.setSampleType(QAudioFormat::SignedInt);
 	mFormat.setCodec("audio/pcm");
 
-	mBufferLength = 8192 * 10;
-	mBuffer.resize(mBufferLength + 1);
+	mBufferLength = SAMPLES * BYTESPERSAMPLE * 4;
+	mBuffer.resize(mBufferLength);
 
 	mAudioInput = new QAudioInput(mAudioInputDeviceInfo, mFormat, this);
 //	connect(mAudioInput, SIGNAL(stateChanged(QAudio::State)),
 //			this, SLOT(audioStateChanged(QAudio::State)));
-//	connect(mAudioInput, SIGNAL(notify()),
-//			this, SLOT(audioNotify()));
 
-	file = new QFile("output/out.raw");
+	connect(&mSpectrumAnalyzer, SIGNAL(spectrumChanged(const FrequencySpectrum&)),
+			this, SLOT(spectrumChanged(const FrequencySpectrum&)));
+
+	file = new QFile("out.raw");
 	if (file->exists()) file->remove();
 	file->open(QIODevice::Append);
+	qDebug() << file->error();
 
-	QTimer::singleShot(30000, this, [this](){stopRecording();});
+//	QTimer::singleShot(120000, this, [this](){stopRecording();});
 }
 
 AudioEngine::~AudioEngine()
 {
+	stopRecording();
 	mAudioInput->deleteLater();
 	file->deleteLater();
 }
 
+/******************************************************************************
+ * Public Functions
+******************************************************************************/
 void AudioEngine::startRecording()
 {
 	mAudioInputIODevice = mAudioInput->start();
@@ -56,9 +66,11 @@ void AudioEngine::stopRecording()
 	mAudioInput->stop();
 	file->close();
 	mAudioInputIODevice = 0;
-	exit(0);
 }
 
+/******************************************************************************
+ * Public Slots
+******************************************************************************/
 void AudioEngine::audioDataReady()
 {
 	const qint64 bytesReady = mAudioInput->bytesReady();
@@ -70,27 +82,58 @@ void AudioEngine::audioDataReady()
 		bytesRead = mAudioInputIODevice->read(mBuffer.data() + mBufferHead, bytesSpace)
 				+ mAudioInputIODevice->read(mBuffer.data(), bytesSpaceWrap);
 		mBufferHead = bytesSpaceWrap;
-		qDebug() << bytesRead;
 	} else {
 		bytesRead = mAudioInputIODevice->read(mBuffer.data() + mBufferHead, bytesReady);
 		mBufferHead += bytesReady;
 	}
 
-	if (bytesRead) {
-		mBufferDataLength += bytesRead;
-	}
+	if (bytesRead) mBufferDataLength += bytesRead;
 
-	if (mBufferDataLength >= 8192) {
-		qDebug() << "writing" << mBufferTail << mBufferTail + 8192;
-		file->write(mBuffer.data() + mBufferTail, 8192);
-		mBufferDataLength -= 8192;
-		mBufferTail += 8192;
+	if (mBufferDataLength >= SAMPLES * BYTESPERSAMPLE) {
+//		qDebug() << "writing" << mBufferTail
+//				 << mBufferTail + SAMPLES * BYTESPERSAMPLE;
+
+//		char *ptr = mBuffer.data() + mBufferTail;
+//		const char *end = ptr + BUFFERSIZE;
+//		while (ptr < end) {
+//			qint16 *value = reinterpret_cast<qint16*>(ptr);
+//			*value = *value * 1; // relative gain
+//			ptr += 2;
+//		}
+
+		calculateSpectrum(mBufferTail);
+		file->write(mBuffer.data() + mBufferTail, SAMPLES * BYTESPERSAMPLE);
+		mBufferDataLength -= SAMPLES * BYTESPERSAMPLE;
+		mBufferTail += SAMPLES * BYTESPERSAMPLE;
 		if (mBufferTail >= mBufferLength) {
 			mBufferTail = 0;
 		}
 	}
 
-	qDebug() << "head:" << mBufferHead << "tail:" << mBufferTail;
-	qDebug() << "bytes ready:" << bytesReady << "bytes space:" << bytesSpace
-			 << "data in buffer:" << mBufferDataLength;
+//	qDebug() << "head:" << mBufferHead << "tail:" << mBufferTail;
+//	qDebug() << "bytes ready:" << bytesReady << "bytes space:" << bytesSpace
+//			 << "data in buffer:" << mBufferDataLength;
+}
+
+/******************************************************************************
+ * Private
+******************************************************************************/
+void AudioEngine::calculateSpectrum(qint64 position)
+{
+	if (mSpectrumAnalyzer.isReady()) {
+		mSpectrumBuffer = QByteArray::fromRawData(mBuffer.constData() + position,
+												  SAMPLES * BYTESPERSAMPLE);
+		mSpectrumAnalyzer.calculateSpectrum(mSpectrumBuffer);
+	}
+}
+
+/******************************************************************************
+ * Private Slots
+******************************************************************************/
+void AudioEngine::spectrumChanged(const FrequencySpectrum &spectrum)
+{
+	const FrequencySpectrum::Sample s1 = spectrum[2];
+	const FrequencySpectrum::Sample s2 = spectrum[4];
+	const FrequencySpectrum::Sample s3 = spectrum[6];
+	emit update(s1.amplitude * 200, s2.amplitude * 200, s3.amplitude * 200);
 }
