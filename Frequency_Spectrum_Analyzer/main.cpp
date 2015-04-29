@@ -4,8 +4,10 @@
 #include <QQmlContext>
 #include <QQuickItem>
 #include <QQuickView>
-
 #include "audioengine.h"
+#include "spectrumdisplay.h"
+
+#define NDEBUG
 
 int main(int argc, char *argv[])
 {
@@ -14,10 +16,18 @@ int main(int argc, char *argv[])
 	AudioEngine engine;
 
 	QQuickView view;
+	view.setFlags(Qt::FramelessWindowHint);
+	view.setColor(QColor(0, 0, 0, 0));
 	view.rootContext()->setContextProperty("engine", &engine);
 	view.setSource(QUrl("qrc:/Main.qml"));
-	view.show();
 
+	SpectrumDisplay frequencyBands(view.engine(), view.rootObject());
+	// send spectrum analysis results to the UI handler
+	QObject::connect(&engine, SIGNAL(spectrumChanged(const FrequencySpectrum&)),
+					 &frequencyBands, SLOT(updateBands(const FrequencySpectrum&)));
+
+	view.setPosition(2200, 600);
+	view.show();
 	engine.startRecording();
 
 	return app.exec();

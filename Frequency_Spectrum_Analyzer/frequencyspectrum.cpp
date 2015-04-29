@@ -1,13 +1,14 @@
 #include "frequencyspectrum.h"
 
+/******************************************************************************
+ * FrequencySpectrum
+******************************************************************************/
 FrequencySpectrum::FrequencySpectrum(int numPoints)
 	: mSpectrum(numPoints)
 {
 }
 
-/******************************************************************************
- * Public Functions
-******************************************************************************/
+/*********** Public Functions ***********/
 // Resets all samples currently stored in mSpectrum.
 void FrequencySpectrum::reset()
 {

@@ -3,20 +3,32 @@
 
 #include <QObject>
 
+class FrequencySpectrum;
+class QQmlEngine;
+class QQuickItem;
+
+/******************************************************************************
+ * Handles the creation and updating of the frequency bands from the audio data
+ * processed by the spectrum analyzer.
+******************************************************************************/
+
 class SpectrumDisplay : public QObject
 {
 	Q_OBJECT
 
 public:
-	explicit SpectrumDisplay(QObject *parent = 0);
+	explicit SpectrumDisplay(QQmlEngine *engine, QQuickItem *root, QObject *parent = 0);
 	~SpectrumDisplay();
 
-signals:
-
 public slots:
+	void updateBands(const FrequencySpectrum &spectrum);
 
 private:
+	QQmlEngine *engine;
+	QQuickItem *root;
 	QList<QQuickItem*> bands;
+	QList<QQuickItem*> bandsReflection;
+	QList<float> binIndices;
 };
 
 #endif // SPECTRUMDISPLAY_H

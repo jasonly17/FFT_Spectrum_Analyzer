@@ -1,36 +1,35 @@
 import QtQuick 2.3
 
 Rectangle {
-    id: main
-    width: 200
-    height: 200
+	id: main
+	width: 1300
+	height: 400
+	color: "#00000000"
+	enabled: false
 
-    Row {
-        id: row1
-        anchors.fill: parent
-        spacing: 4
-        Repeater {
-            id: spectrum
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 200
-            model: 56
-            Rectangle {
-                id: delagate
-                width: 10
-                height: 200
-                color: "#1bbfff"
-                anchors.bottom: parent.bottom
-                anchors.bottomMargin: 0
-            }
-        }
+	Row {
+		id: bands
+		objectName: "bands"
+		width: parent.width
+		height: parent.height / 2
+		spacing: 4
+	}
 
-        Connections {
-            target: engine
-            onUpdate: {
-                spectrum.itemAt(0).height = val1
-                spectrum.itemAt(1).height = val2
-                spectrum.itemAt(2).height = val3
-            }
-        }
-    }
+	Rectangle {
+		id: divider
+		objectName: "divider"
+		color: "#40ffffff"
+		width: parent.width
+		height: 1
+		anchors.top: bands.bottom
+	}
+
+	Row {
+		id: bandsReflection
+		objectName: "bandsReflection"
+		width: parent.width
+		height: parent.height / 2
+		anchors.top: divider.bottom
+		spacing: 4
+	}
 }

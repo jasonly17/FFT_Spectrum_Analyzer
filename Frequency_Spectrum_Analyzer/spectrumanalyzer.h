@@ -8,6 +8,10 @@
 
 class FFFTWrapper;
 
+/******************************************************************************
+ * Class to perform the spectrum analysis in a separate thread.
+******************************************************************************/
+
 class SpectrumAnalyzerThread : public QObject
 {
 	Q_OBJECT
@@ -17,7 +21,7 @@ public:
 	~SpectrumAnalyzerThread();
 
 public slots:
-	void calculateSpectrum(const QByteArray &buffer, int inputFrequency);
+	void calculateSpectrum(const QByteArray &buffer);
 
 signals:
 	void calculationComplete(const FrequencySpectrum &spectrum);
@@ -35,6 +39,9 @@ private:
 	QThread *mThread;
 };
 
+/******************************************************************************
+ * Handles the spectrum analysis of the audio data provided by the audio engine.
+******************************************************************************/
 
 class SpectrumAnalyzer : public QObject
 {

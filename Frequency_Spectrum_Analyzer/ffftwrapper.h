@@ -1,6 +1,10 @@
 #ifndef FFFTWRAPPER_H
 #define FFFTWRAPPER_H
 
+/******************************************************************************
+ * A wrapper for the FFTReal library.
+******************************************************************************/
+
 class FFFTWrapperPrivate;
 
 class FFFTWrapper

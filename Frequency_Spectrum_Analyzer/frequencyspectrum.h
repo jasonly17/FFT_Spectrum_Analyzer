@@ -14,12 +14,10 @@ public:
 	FrequencySpectrum(int numPoints = 0);
 
 	struct Sample {
-		Sample() : frequency(0.0), amplitude(0.0), phase(0.0), clipped(false) {}
+		Sample() : frequency(0.0), amplitude(0.0) {}
 
 		qreal frequency; // Hz
 		qreal amplitude; // range [0.0, 1.0]
-		qreal phase; // range [0.0, 2*pi]
-		bool clipped; // indicates whether sample has been clipped during spectrum analysis
 	};
 
 	typedef QVector<Sample>::Iterator Iterator;

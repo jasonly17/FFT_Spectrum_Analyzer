@@ -28,16 +28,13 @@ public:
 	void stopRecording();
 
 signals:
-	void update(double val1, double val2, double val3);
+	void spectrumChanged(const FrequencySpectrum &spectrum);
 
 public slots:
 	void audioDataReady();
 
 private:
 	void calculateSpectrum(qint64 position);
-
-private slots:
-	void spectrumChanged(const FrequencySpectrum &spectrum);
 
 private:
 	QAudio::State mState;
