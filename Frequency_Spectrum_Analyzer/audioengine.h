@@ -3,9 +3,9 @@
 
 #include <QAudio>
 #include <QAudioDeviceInfo>
-#include <QAudioFormat>
 #include <QAudioInput>
 #include <QByteArray>
+#include <QTimer>
 #include "spectrumanalyzer.h"
 
 class QFile;
@@ -19,7 +19,6 @@ class QObject;
 class AudioEngine : public QObject
 {
 	Q_OBJECT
-
 public:
 	explicit AudioEngine(QObject *parent = 0);
 	~AudioEngine();
@@ -36,14 +35,13 @@ public slots:
 private:
 	void calculateSpectrum(qint64 position);
 
-private:
-	QAudio::State mState;
-	QAudioFormat mFormat;
+private slots:
+    void reset();
 
-	const QList<QAudioDeviceInfo> availableAudioInputDevices;
-	QAudioDeviceInfo mAudioInputDeviceInfo;
+private:
 	QAudioInput *mAudioInput;
 	QIODevice *mAudioInputIODevice;
+    QTimer *resetTimer;
 
 	QByteArray mBuffer;
 	qint64 mBufferHead;
@@ -54,10 +52,6 @@ private:
 	QByteArray mSpectrumBuffer;
 	qint64 mSpectrumBufferLength;
 	SpectrumAnalyzer mSpectrumAnalyzer;
-
-	QFile *file;
-	QDataStream out;
-	int mCount;
 };
 
 #endif // AUDIOENGINE_H

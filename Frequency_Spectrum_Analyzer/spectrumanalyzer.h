@@ -15,7 +15,6 @@ class FFFTWrapper;
 class SpectrumAnalyzerThread : public QObject
 {
 	Q_OBJECT
-
 public:
 	SpectrumAnalyzerThread(QObject *parent);
 	~SpectrumAnalyzerThread();

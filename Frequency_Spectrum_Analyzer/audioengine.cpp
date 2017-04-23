@@ -11,17 +11,15 @@
 ******************************************************************************/
 AudioEngine::AudioEngine(QObject *parent)
 	: QObject(parent)
-	, mState(QAudio::StoppedState)
-	, availableAudioInputDevices(QAudioDeviceInfo::availableDevices(QAudio::AudioInput))
-	, mAudioInputDeviceInfo(QAudioDeviceInfo::defaultInputDevice())
 	, mBufferHead(0)
 	, mBufferTail(0)
 	, mBufferDataLength(0)
-	, mCount(0)
+//	, mCount(0)
 {
 	qRegisterMetaType<FrequencySpectrum>("FrequencySpectrum");
 
 	// pcm 16-bit signed audio
+	QAudioFormat mFormat;
 	mFormat.setSampleRate(SAMPLERATE);
 	mFormat.setSampleSize(BITSPERSAMPLE);
 	mFormat.setChannelCount(CHANNELCOUNT);
@@ -30,25 +28,33 @@ AudioEngine::AudioEngine(QObject *parent)
 	mFormat.setCodec("audio/pcm");
 
 	// give extra buffers for simultaneous buffering and processing
-	mBufferLength = SAMPLES * SAMPLESIZE * 4;
+    mBufferLength = SAMPLES * SAMPLESIZE * 4;
 	mBuffer.resize(mBufferLength);
 
-	mAudioInput = new QAudioInput(mAudioInputDeviceInfo, mFormat, this);
+	qDebug() << QAudioDeviceInfo::defaultInputDevice().deviceName();
+
+	//mAudioInput = new QAudioInput(QAudioDeviceInfo::availableDevices(QAudio::AudioInput).at(21), mFormat, this);
+	mAudioInput = new QAudioInput(QAudioDeviceInfo::defaultInputDevice(), mFormat, this);
+//    mAudioInput->setBufferSize(10000);
+//    mAudioInput->setBufferSize(5760);
 
 	connect(&mSpectrumAnalyzer, SIGNAL(spectrumChanged(const FrequencySpectrum&)),
 			this, SIGNAL(spectrumChanged(const FrequencySpectrum&)));
 
-//	file = new QFile("out.raw");
-//	if (file->exists()) file->remove();
-//	file->open(QIODevice::Append);
-//	qDebug() << file->error();
+    resetTimer = new QTimer();
+    resetTimer->setInterval(5000);
+    resetTimer->setSingleShot(false);
+
+    connect(resetTimer, SIGNAL(timeout()),
+            this, SLOT(reset()));
+
+    resetTimer->start();
 }
 
 AudioEngine::~AudioEngine()
 {
 	stopRecording();
 	mAudioInput->deleteLater();
-//	file->deleteLater();
 }
 
 /*********** Public Functions ***********/
@@ -56,6 +62,7 @@ AudioEngine::~AudioEngine()
 void AudioEngine::startRecording()
 {
 	mAudioInputIODevice = mAudioInput->start();
+	qDebug() << "Buffer size:" << mAudioInput->bufferSize();
 	connect(mAudioInputIODevice, SIGNAL(readyRead()),
 			this, SLOT(audioDataReady()));
 }
@@ -65,7 +72,6 @@ void AudioEngine::stopRecording()
 {
 	qDebug() << "stopping";
 	mAudioInput->stop();
-//	file->close();
 	mAudioInputIODevice = 0;
 }
 
@@ -91,10 +97,16 @@ void AudioEngine::audioDataReady()
 
 	if (bytesRead) mBufferDataLength += bytesRead;
 
-	if (mBufferDataLength >= SAMPLES * SAMPLESIZE) {
-//		qDebug() << "writing" << mBufferTail
-//				 << mBufferTail + SAMPLES * BYTESPERSAMPLE;
+//	if (mBufferDataLength >= SAMPLES * SAMPLESIZE / 2) {
+//		calculateSpectrum(mBufferTail);
+//		mBufferDataLength -= SAMPLES * SAMPLESIZE / 2;
+//		mBufferTail += SAMPLES * SAMPLESIZE / 2;
+//		if (mBufferTail >= mBufferLength) {
+//			mBufferTail = 0;
+//		}
+//	}
 
+    if (mBufferDataLength >= SAMPLES * SAMPLESIZE) {
 //		char *ptr = mBuffer.data() + mBufferTail;
 //		const char *end = ptr + BUFFERSIZE;
 //		while (ptr < end) {
@@ -104,26 +116,43 @@ void AudioEngine::audioDataReady()
 //		}
 
 		calculateSpectrum(mBufferTail);
-//		file->write(mBuffer.data() + mBufferTail, SAMPLES * SAMPLESIZE);
-		mBufferDataLength -= SAMPLES * SAMPLESIZE;
-		mBufferTail += SAMPLES * SAMPLESIZE;
+        mBufferDataLength -= SAMPLES * SAMPLESIZE;
+        mBufferTail += SAMPLES * SAMPLESIZE;
 		if (mBufferTail >= mBufferLength) {
 			mBufferTail = 0;
 		}
 	}
+}
 
-//	qDebug() << "head:" << mBufferHead << "tail:" << mBufferTail;
-//	qDebug() << "bytes ready:" << bytesReady << "bytes space:" << bytesSpace
-//			 << "data in buffer:" << mBufferDataLength;
+void AudioEngine::reset()
+{
+    if (mAudioInputIODevice != 0) {
+        mBufferHead = 0;
+        mBufferTail = 0;
+        mBufferDataLength = 0;
+    }
 }
 
 /*********** Private Functions ***********/
 // Send the audio data to be processed by the spectrum analyzer.
 void AudioEngine::calculateSpectrum(qint64 position)
 {
+//	if (mSpectrumAnalyzer.isReady()) {
+//		int index = position + SAMPLES * SAMPLESIZE;
+//		if (index > mBuffer.size()) {
+//			int remLength = index - mBuffer.size();
+//			mSpectrumBuffer = QByteArray::fromRawData(mBuffer.constData() + position, remLength);
+//			mSpectrumBuffer.append(QByteArray::fromRawData(mBuffer.constData(), SAMPLES * SAMPLESIZE - remLength));
+//		} else {
+//			mSpectrumBuffer = QByteArray::fromRawData(mBuffer.constData() + position,
+//													  SAMPLES * SAMPLESIZE);
+//		}
+//		mSpectrumAnalyzer.calculateSpectrum(mSpectrumBuffer);
+//	}
+
 	if (mSpectrumAnalyzer.isReady()) {
 		mSpectrumBuffer = QByteArray::fromRawData(mBuffer.constData() + position,
-												  SAMPLES * SAMPLESIZE);
+                                                  SAMPLES * SAMPLESIZE);
 		mSpectrumAnalyzer.calculateSpectrum(mSpectrumBuffer);
 	}
 }

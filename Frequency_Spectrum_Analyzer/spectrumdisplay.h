@@ -15,7 +15,6 @@ class QQuickItem;
 class SpectrumDisplay : public QObject
 {
 	Q_OBJECT
-
 public:
 	explicit SpectrumDisplay(QQmlEngine *engine, QQuickItem *root, QObject *parent = 0);
 	~SpectrumDisplay();
@@ -28,7 +27,9 @@ private:
 	QQuickItem *root;
 	QList<QQuickItem*> bands;
 	QList<QQuickItem*> bandsReflection;
+	//QList<int> bandHeights;
 	QList<float> binIndices;
+	bool updating;
 };
 
 #endif // SPECTRUMDISPLAY_H

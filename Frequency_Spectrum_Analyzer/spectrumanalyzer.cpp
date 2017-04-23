@@ -3,6 +3,7 @@
 #include <QtMath>
 #include <QMetaType>
 #include <QThread>
+#include <QDebug>
 #include "def.h"
 #include "ffftwrapper.h"
 #include "utils.h"
@@ -25,11 +26,8 @@ SpectrumAnalyzerThread::SpectrumAnalyzerThread(QObject *parent)
 
 	for (int i = 0; i < SAMPLES; ++i) {
 		DataType x = 0.5 * (1 - qCos((2 * M_PI * i) / (SAMPLES - 1)));
+		//DataType x = 0.54f - 0.46f * qCos((2 * M_PI * i) / (SAMPLES - 1));
 		mWindow[i] = x;
-	}
-
-	for (int i = 1; i <= SAMPLES / 2; i++) {
-		mSpectrum[i].frequency = qreal(i * SAMPLERATE) / SAMPLES;
 	}
 }
 
@@ -42,24 +40,55 @@ void SpectrumAnalyzerThread::calculateSpectrum(const QByteArray &buffer)
 	const char *ptr = buffer.constData();
 	for (int i = 0; i < SAMPLES; ++i) {
 		const qint16 pcmSample = *reinterpret_cast<const qint16*>(ptr);
+		//qDebug() << i << pcmSample;
 		const DataType realSample = pcmToReal(pcmSample);
 		const DataType windowedSample = realSample * mWindow[i];
 		mInput[i] = windowedSample;
-		ptr += BYTESPERSAMPLE * CHANNELCOUNT;
+		ptr += SAMPLESIZE;
 	}
 
 	mFFT->calculateFFT(mOutput.data(), mInput.data());
 
-	for (int i = 1; i <= SAMPLES / 2; i++) {
-		const qreal real = mOutput[i];
+	for (int i = 2; i <= SAMPLES; i += 2) {
+		const qreal real = mOutput[i / 2];
 		qreal imag = 0.0;
-		if (i < SAMPLES / 2) imag = mOutput[SAMPLES / 2 + i];
+		if (i / 2 < SAMPLES / 2) imag = mOutput[SAMPLES / 2 + i / 2];
 
-		const qreal magnitude = sqrt(real * real + imag * imag);
-		qreal amplitude = SPECTRUMFUDGEFACTOR * log(magnitude);
+		qreal magnitude = real * real + imag * imag;
+		qreal amplitude = SPECTRUMFUDGEFACTOR * log10(magnitude);
+		//const qreal magnitude = sqrt(real * real + imag * imag);
+		//qDebug() << i << magnitude;
+		//qreal amplitude = SPECTRUMFUDGEFACTOR * log10(magnitude);
 
-		mSpectrum[i].amplitude = qMin(1.0, qMax(0.0, amplitude));
+		mSpectrum[i - 2].amplitude = qMin(1.0, qMax(0.0, amplitude));
+		if (i / 2 > 1 && i <= SAMPLES) {
+			mSpectrum[i - 3].amplitude = (mSpectrum[i - 4].amplitude
+										 + mSpectrum[i - 2].amplitude) / 2;
+		}
 	}
+
+//	for (int i = 1; i <= SAMPLES / 2; i++) {
+//		const qreal real = mOutput[i];
+//		qreal imag = 0.0;
+//		if (i < SAMPLES / 2) imag = mOutput[SAMPLES / 2 + i];
+
+//		const qreal magnitude = sqrt(real * real + imag * imag);
+//		qreal amplitude = SPECTRUMFUDGEFACTOR * log(magnitude);
+
+//		mSpectrum[i].amplitude = qMin(1.0, qMax(0.0, amplitude));
+//	}
+
+//	for (int i = 1; i <= SAMPLES / 2; i++) {
+//		const qreal real = mOutput[i];
+//		qreal imag = 0.0;
+//		if (i < SAMPLES / 2) imag = mOutput[SAMPLES / 2 + i];
+
+//		const qreal magnitude = sqrt(real * real + imag * imag);
+//		qreal amplitude = SPECTRUMFUDGEFACTOR * log(magnitude);
+
+//		mSpectrum[i].amplitude = qMin(1.0, qMax(0.0, amplitude));
+//		//qDebug() << i << mSpectrum[i].amplitude;
+//	}
 	emit calculationComplete(mSpectrum);
 }
 

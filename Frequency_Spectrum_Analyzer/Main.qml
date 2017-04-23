@@ -2,8 +2,8 @@ import QtQuick 2.3
 
 Rectangle {
 	id: main
-	width: 1300
-	height: 400
+	property alias appHeight: main.height
+    width: 3000
 	color: "#00000000"
 	enabled: false
 
@@ -12,7 +12,7 @@ Rectangle {
 		objectName: "bands"
 		width: parent.width
 		height: parent.height / 2
-		spacing: 4
+        spacing: 2
 	}
 
 	Rectangle {
@@ -30,6 +30,6 @@ Rectangle {
 		width: parent.width
 		height: parent.height / 2
 		anchors.top: divider.bottom
-		spacing: 4
+		spacing: 2
 	}
 }

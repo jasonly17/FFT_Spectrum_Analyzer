@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-QT += qml quick widgets multimedia
+QT += multimedia qml quick gui widgets
 
 INCLUDEPATH += ffft
 
@@ -9,11 +9,11 @@ SOURCES += main.cpp \
 	utils.cpp \
 	frequencyspectrum.cpp \
 	spectrumanalyzer.cpp \
-    ffftwrapper.cpp \
-    spectrumdisplay.cpp
+	ffftwrapper.cpp \
+	spectrumdisplay.cpp
 
 RESOURCES += \
-    spectrum.qrc
+	spectrum.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
 QML_IMPORT_PATH =
@@ -26,28 +26,30 @@ HEADERS += \
 	utils.h \
 	frequencyspectrum.h \
 	spectrumanalyzer.h \
-    ffft/FFTRealFixLenParam.h \
-    ffft/FFTReal.h \
-    ffft/FFTReal.hpp \
-    ffft/Array.h \
-    ffft/Array.hpp \
-    ffft/def.h \
-    ffft/DynArray.h \
-    ffft/DynArray.hpp \
-    ffft/FFTRealFixLen.h \
-    ffft/FFTRealFixLen.hpp \
-    ffft/FFTRealPassDirect.h \
-    ffft/FFTRealPassDirect.hpp \
-    ffft/FFTRealPassInverse.h \
-    ffft/FFTRealPassInverse.hpp \
-    ffft/FFTRealSelect.h \
-    ffft/FFTRealSelect.hpp \
-    ffft/FFTRealUseTrigo.h \
-    ffft/FFTRealUseTrigo.hpp \
-    ffft/OscSinCos.h \
+	ffft/FFTRealFixLenParam.h \
+	ffft/FFTReal.h \
+	ffft/FFTReal.hpp \
+	ffft/Array.h \
+	ffft/Array.hpp \
+	ffft/def.h \
+	ffft/DynArray.h \
+	ffft/DynArray.hpp \
+	ffft/FFTRealFixLen.h \
+	ffft/FFTRealFixLen.hpp \
+	ffft/FFTRealPassDirect.h \
+	ffft/FFTRealPassDirect.hpp \
+	ffft/FFTRealPassInverse.h \
+	ffft/FFTRealPassInverse.hpp \
+	ffft/FFTRealSelect.h \
+	ffft/FFTRealSelect.hpp \
+	ffft/FFTRealUseTrigo.h \
+	ffft/FFTRealUseTrigo.hpp \
+	ffft/OscSinCos.h \
 	ffft/OscSinCos.hpp \
-    ffftwrapper.h \
-    def.h \
-    spectrumdisplay.h
+	ffftwrapper.h \
+	def.h \
+	spectrumdisplay.h
 
 DISTFILES +=
+
+FORMS +=
