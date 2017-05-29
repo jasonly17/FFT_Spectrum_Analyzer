@@ -32,3 +32,8 @@ build-*
 #QtCtreator Qml
 *.qmlproject.user
 *.qmlproject.user.*
+
+# Visual Studio
+.vs
+GeneratedFiles
+x64
