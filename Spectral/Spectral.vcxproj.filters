@@ -24,10 +24,110 @@
       <Extensions>moc;h;cpp</Extensions>
       <SourceControlFiles>False</SourceControlFiles>
     </Filter>
+    <Filter Include="Header Files\ffft">
+      <UniqueIdentifier>{b4164c6a-a0c0-4822-932d-27d1146f4825}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Preferences.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FfftWrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpectrumData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_AudioEngine.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_AudioEngine.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Architecture.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ffft\Array.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\Array.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\def.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\DynArray.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\DynArray.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTReal.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTReal.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealFixLen.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealFixLen.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealFixLenParam.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealPassDirect.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealPassDirect.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealPassInverse.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealPassInverse.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealSelect.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealSelect.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealUseTrigo.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\FFTRealUseTrigo.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\OscSinCos.h">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="ffft\OscSinCos.hpp">
+      <Filter>Header Files\ffft</Filter>
+    </ClInclude>
+    <ClInclude Include="Preferences.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FfftWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SpectrumData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="AudioEngine.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

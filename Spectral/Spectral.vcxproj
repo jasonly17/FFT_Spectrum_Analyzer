@@ -70,7 +70,55 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="AudioEngine.cpp" />
+    <ClCompile Include="FfftWrapper.cpp" />
+    <ClCompile Include="GeneratedFiles\Debug\moc_AudioEngine.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_AudioEngine.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Preferences.cpp" />
+    <ClCompile Include="SpectrumData.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Architecture.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="AudioEngine.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing AudioEngine.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_QML_LIB -DQT_QUICK_LIB "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtQml" "-I$(QTDIR)\include\QtQuick"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing AudioEngine.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp"  -DUNICODE -DWIN32 -DWIN64 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_QML_LIB -DQT_QUICK_LIB "-I." "-I$(QTDIR)\include" "-I.\GeneratedFiles\$(ConfigurationName)\." "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtMultimedia" "-I$(QTDIR)\include\QtQml" "-I$(QTDIR)\include\QtQuick"</Command>
+    </CustomBuild>
+    <ClInclude Include="FfftWrapper.h" />
+    <ClInclude Include="ffft\Array.h" />
+    <ClInclude Include="ffft\Array.hpp" />
+    <ClInclude Include="ffft\def.h" />
+    <ClInclude Include="ffft\DynArray.h" />
+    <ClInclude Include="ffft\DynArray.hpp" />
+    <ClInclude Include="ffft\FFTReal.h" />
+    <ClInclude Include="ffft\FFTReal.hpp" />
+    <ClInclude Include="ffft\FFTRealFixLen.h" />
+    <ClInclude Include="ffft\FFTRealFixLen.hpp" />
+    <ClInclude Include="ffft\FFTRealFixLenParam.h" />
+    <ClInclude Include="ffft\FFTRealPassDirect.h" />
+    <ClInclude Include="ffft\FFTRealPassDirect.hpp" />
+    <ClInclude Include="ffft\FFTRealPassInverse.h" />
+    <ClInclude Include="ffft\FFTRealPassInverse.hpp" />
+    <ClInclude Include="ffft\FFTRealSelect.h" />
+    <ClInclude Include="ffft\FFTRealSelect.hpp" />
+    <ClInclude Include="ffft\FFTRealUseTrigo.h" />
+    <ClInclude Include="ffft\FFTRealUseTrigo.hpp" />
+    <ClInclude Include="ffft\OscSinCos.h" />
+    <ClInclude Include="ffft\OscSinCos.hpp" />
+    <ClInclude Include="Preferences.h" />
+    <ClInclude Include="SpectrumData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
